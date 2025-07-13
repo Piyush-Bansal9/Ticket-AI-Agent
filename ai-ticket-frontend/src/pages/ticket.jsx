@@ -23,6 +23,7 @@ export default function TicketDetailsPage() {
         const data = await res.json();
         if (res.ok) {
           setTicket(data.ticket);
+          console.log(data);
         } else {
           alert(data.message || "Failed to fetch ticket");
         }
@@ -50,11 +51,11 @@ export default function TicketDetailsPage() {
         <p>{ticket.description}</p>
 
         {/* Conditionally render extended details */}
-        {ticket.status && (
+        {ticket.Status && (
           <>
             <div className="divider">Metadata</div>
             <p>
-              <strong>Status:</strong> {ticket.status}
+              <strong>Status:</strong> {ticket.Status}
             </p>
             {ticket.priority && (
               <p>

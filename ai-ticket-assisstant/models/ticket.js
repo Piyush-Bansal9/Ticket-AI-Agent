@@ -6,7 +6,7 @@ const ticketSchema = new mongoose.Schema({
         required: true,
     },
     description: String,
-    Status: {type: String, default: "TODO"},
+    status: {type: String, default: "TODO"},
     createdBy: {type: mongoose.Schema.Types.ObjectId, ref : "User"},
     assignedTo: {type: mongoose.Schema.Types.ObjectId, ref : "User", default: null},
     priority: String,
