@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -64,7 +64,6 @@ export default function LoginPage() {
                         onChange={handleChange}
                         required
                     />
-
                     <div className="form-control mt-4">
                         <button
                             type="submit"
@@ -74,6 +73,7 @@ export default function LoginPage() {
                             {loading ? "Logging in..." : "Login"}
                         </button>
                     </div>
+                    <div className="text-gray-500 mt-2">First Time Here ? <Link to="/signup" className="text-gray-300">SignUp Now</Link></div>
                 </form>
             </div>
         </div>

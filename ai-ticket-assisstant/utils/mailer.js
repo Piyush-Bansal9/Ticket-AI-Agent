@@ -7,8 +7,8 @@ export const sendMail = async(to, subject, text) => {
             port: process.env.MAILTRAP_SMTP_PORT,
             secure: false, // true for 465, false for other ports
             auth: {
-                user: MAILTRAP_SMTP_NAME,
-                pass: MAILTRAP_SMTP_PASS,
+                user: process.env.MAILTRAP_SMTP_NAME,
+                pass: process.env.MAILTRAP_SMTP_PASS,
             },
         });
 

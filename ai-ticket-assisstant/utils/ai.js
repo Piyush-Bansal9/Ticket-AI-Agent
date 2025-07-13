@@ -1,10 +1,18 @@
 import { createAgent, gemini } from "@inngest/agent-kit";
 
+function extractRawJSON(text) {
+  const match = text.match(/```json\s*([\s\S]*?)\s*```/);
+  if (match) {
+    return match[1];
+  }
+  return text;
+}
+
 const analyzeTicket = async (ticket) => {
-    const supportAgent = createAgent({
+  const supportAgent = createAgent({
     model: gemini({
-        model: "gemini-1.5-flash-8b",
-        apiKey: process.env.GEMINI_API_KEY,
+      model: "gemini-1.5-flash-8b",
+      apiKey: process.env.GEMINI_API_KEY,
     }),
     name: "AI Ticket Triage Assistant",
     system: `You are an expert AI assistant that processes technical support tickets. 
@@ -18,14 +26,11 @@ Your job is to:
 IMPORTANT:
 - Respond with *only* valid raw JSON.
 - Do NOT include markdown, code fences, comments, or any extra formatting.
-- The format must be a raw JSON object.
+- The format must be a raw JSON object.`,
+  });
 
-Repeat: Do not wrap your output in markdown or code fences.`,
-    });
+  const response = await supportAgent.run(`You are a ticket triage agent. Only return a strict JSON object with no extra text, headers, or markdown.
 
-    const response =
-    await supportAgent.run(`You are a ticket triage agent. Only return a strict JSON object with no extra text, headers, or markdown.
-        
 Analyze the following support ticket and provide a JSON object with:
 
 - summary: A short 1-2 sentence summary of the issue.
@@ -36,10 +41,10 @@ Analyze the following support ticket and provide a JSON object with:
 Respond ONLY in this JSON format and do not include any other text or markdown in the answer:
 
 {
-"summary": "Short summary of the ticket",
-"priority": "high",
-"helpfulNotes": "Here are useful tips...",
-"relatedSkills": ["React", "Node.js"]
+  "summary": "Short summary of the ticket",
+  "priority": "high",
+  "helpfulNotes": "Here are useful tips...",
+  "relatedSkills": ["React", "Node.js"]
 }
 
 ---
@@ -49,16 +54,16 @@ Ticket information:
 - Title: ${ticket.title}
 - Description: ${ticket.description}`);
 
-    const raw = response.output[0].context;
+  const rawText = response.output[0]?.content || "";
+  const jsonText = extractRawJSON(rawText);
 
-    try {
-        const match = raw.match(/```json\s*([\s\S]*?)\s*```/i);
-        const jsonString = match ? match[1] : raw.trim();
-        return JSON.parse(jsonString);
-    } catch (e) {
-        console.log("Failed to parse JSON from AI response" + e.message);
-        return null; // watch out for this
-    }
+  try {
+    return JSON.parse(jsonText.trim());
+  } catch (err) {
+    console.error("❌ Failed to parse JSON from AI response:", err.message);
+    console.error("Raw AI response was:", jsonText);
+    return null;
+  }
 };
 
 export default analyzeTicket;
