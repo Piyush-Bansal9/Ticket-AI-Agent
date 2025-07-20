@@ -29,6 +29,8 @@ export default function LoginPage() {
                 localStorage.setItem("user", JSON.stringify(data.user));
                 navigate("/");
             } else {
+                console.log(res);
+                
                 alert(data.message || "Login failed");
             }
             } catch (err) {

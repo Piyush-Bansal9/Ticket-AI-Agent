@@ -34,14 +34,14 @@ export const userSignup = async(req, res) => {
 export const userLogin = async(req, res ) => {
     const {email, password} = req.body;
     try{
-        const foundData = await User.findOne({email});
-        if(!foundData) {
+        const user = await User.findOne({email});
+        if(!user) {
             return res.status(401).json({
                 message: "User not found.",
 
             })
         }
-        const comaparison = await bcrypt.compare(password, foundData.password);
+        const comaparison = await bcrypt.compare(password, user.password);
         if(!comaparison) {
             return res.status(400).json({
                 message: "Wrong credentials."
