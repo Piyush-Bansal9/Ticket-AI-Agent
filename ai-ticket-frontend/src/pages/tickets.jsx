@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Loader from "../components/Loader.jsx";
 
 export default function Tickets() {
   const [form, setForm] = useState({ title: "", description: "" });
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
 
   const token = localStorage.getItem("token");
 
@@ -18,6 +20,9 @@ export default function Tickets() {
       setTickets(data || []);
     } catch (err) {
       console.error("Failed to fetch tickets:", err);
+    }
+    finally{
+      setFetchLoading(false);
     }
   };
 
@@ -86,7 +91,15 @@ export default function Tickets() {
 
       <h2 className="text-xl font-semibold mb-2">All Tickets</h2>
       <div className="space-y-3">
-        {tickets.map((ticket) => (
+        {
+        fetchLoading ? 
+          <div>
+            <Loader />
+            <Loader />
+            <Loader />
+          </div>
+        :
+        tickets.map((ticket) => (
           <Link
             key={ticket._id}
             className="card shadow-md p-4 bg-gray-800"
